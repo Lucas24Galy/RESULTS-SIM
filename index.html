@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SimRacing Results</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #1a1a1a;
+            color: white;
+            text-align: center;
+            margin: 20px;
+        }
+        .results-table {
+            width: 90%;
+            margin: 20px auto;
+            border-collapse: collapse;
+        }
+        .results-table th, .results-table td {
+            border: 1px solid #333;
+            padding: 10px;
+        }
+        .results-table th {
+            background: #00cc66;
+        }
+        .results-table tr:nth-child(odd) {
+            background: #003366;
+        }
+        .results-table tr:nth-child(even) {
+            background: #004c99;
+        }
+    </style>
+</head>
+<body>
+    <h1>SimRacing Results</h1>
+    <table class="results-table" id="results"></table>
+
+    <script>
+        fetch('/mnt/data/remote.csv')
+            .then(response => response.text())
+            .then(data => {
+                const rows = data.split('\n');
+                const table = document.getElementById('results');
+                rows.forEach((row, index) => {
+                    const cols = row.split(',');
+                    const tr = document.createElement('tr');
+                    cols.forEach(col => {
+                        const cell = index === 0 ? document.createElement('th') : document.createElement('td');
+                        cell.textContent = col.trim();
+                        tr.appendChild(cell);
+                    });
+                    table.appendChild(tr);
+                });
+            });
+    </script>
+</body>
+</html>
