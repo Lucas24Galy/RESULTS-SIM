@@ -16,10 +16,12 @@
             width: 90%;
             margin: 20px auto;
             border-collapse: collapse;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
         }
         .results-table th, .results-table td {
             border: 1px solid #333;
             padding: 10px;
+            text-align: center;
         }
         .results-table th {
             background: #00cc66;
@@ -37,22 +39,31 @@
     <table class="results-table" id="results"></table>
 
     <script>
-        fetch('/mnt/data/remote.csv')
+        fetch('remote.csv')
             .then(response => response.text())
             .then(data => {
-                const rows = data.split('\n');
+                const rows = data.split('\n').map(row => row.trim()).filter(row => row.length > 0);
                 const table = document.getElementById('results');
+                const header = document.createElement('tr');
+                ["Position", "Prénom", "Equipe", "Points", "Ecart"].forEach(text => {
+                    const th = document.createElement('th');
+                    th.textContent = text;
+                    header.appendChild(th);
+                });
+                table.appendChild(header);
                 rows.forEach((row, index) => {
+                    if (index === 0) return; // Skip CSV header if needed
                     const cols = row.split(',');
                     const tr = document.createElement('tr');
                     cols.forEach(col => {
-                        const cell = index === 0 ? document.createElement('th') : document.createElement('td');
-                        cell.textContent = col.trim();
-                        tr.appendChild(cell);
+                        const td = document.createElement('td');
+                        td.textContent = col.trim();
+                        tr.appendChild(td);
                     });
                     table.appendChild(tr);
                 });
-            });
+            })
+            .catch(error => console.error('Error loading CSV:', error));
     </script>
 </body>
 </html>
